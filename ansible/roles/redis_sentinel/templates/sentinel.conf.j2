@@ -5,6 +5,6 @@ logfile /var/log/redis/redis-sentinel.log
 dir /var/lib/redis
 
 # Monitor the primary Redis master
-sentinel monitor mymaster {{ hostvars[groups['role_redis_node'][0]]['ansible_internal_ip'] | default(groups['role_redis_node'][0]) }} {{ redis_port }} 2
+sentinel monitor mymaster {{ hostvars[groups['role_redis_node'][0]]['private_ip_address'] }} {{ redis_port }} 2
 sentinel down-after-milliseconds mymaster 5000
 sentinel failover-timeout mymaster 60000
