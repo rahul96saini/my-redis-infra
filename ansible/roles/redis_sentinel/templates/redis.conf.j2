@@ -9,5 +9,5 @@ dir /var/lib/redis
 
 # If this is not the first node, configure it as a replica of the first node in the inventory
 {% if inventory_hostname != groups['role_redis_node'][0] %}
-replicaof {{ hostvars[groups['role_redis_node'][0]]['ansible_internal_ip'] | default(groups['role_redis_node'][0]) }} {{ redis_port }}
+replicaof {{ hostvars[groups['role_redis_node'][0]]['private_ip_address'] }} {{ redis_port }}
 {% endif %}
