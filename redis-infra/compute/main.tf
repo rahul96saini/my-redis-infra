@@ -1,6 +1,6 @@
 # Bastion Host in Public Subnet
 resource "aws_instance" "bastion" {
-  ami                    = "ami = ami-094adff9b24048c5c" # Ubuntu 22.04 LTS for ap-south-1
+  ami                    = "ami-094adff9b24048c5c" # Ubuntu 24.04 LTS (HVM) for ap-south-1
   instance_type          = "t3.micro"
   key_name               = var.key_name
   subnet_id              = var.public_subnet_id
