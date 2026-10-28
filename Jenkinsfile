@@ -34,7 +34,7 @@ pipeline {
                         exit 1
                       fi
                       
-                      ansible-playbook playbook.yml --ssh-common-args="-o ProxyCommand='ssh -W %h:%p -q -i ~/.ssh/my-guru.pem ubuntu@${BASTION_IP}'"
+                      ansible-playbook playbook.yml --ssh-common-args="-o ProxyCommand='ssh -W %h:%p -q -i /home/rahul/.ssh/my_guru.pem ubuntu@${BASTION_IP}'"
                     '''
                 }
             }
