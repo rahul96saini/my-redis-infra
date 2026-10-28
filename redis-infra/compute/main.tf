@@ -1,6 +1,6 @@
 # Bastion Host in Public Subnet
 resource "aws_instance" "bastion" {
-  ami                    = "ami-053b12be3c279a9c7" # Ubuntu 22.04 LTS for ap-south-1
+  ami                    = "ami = ami-094adff9b24048c5c" # Ubuntu 22.04 LTS for ap-south-1
   instance_type          = "t3.micro"
   key_name               = var.key_name
   subnet_id              = var.public_subnet_id
@@ -14,7 +14,7 @@ resource "aws_instance" "bastion" {
 # 3 Redis Nodes in Private Subnets (Tagged for Ansible Dynamic Inventory)
 resource "aws_instance" "redis_nodes" {
   count                  = 3
-  ami                    = "ami-053b12be3c279a9c7"
+  ami                    = "ami-094adff9b24048c5c"
   instance_type          = "t3.small"
   key_name               = var.key_name
   subnet_id              = var.private_subnet_ids[count.index]
