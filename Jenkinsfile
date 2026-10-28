@@ -22,6 +22,19 @@ pipeline {
             }
         }
 
+        stage('Debug SSH') {
+            steps {
+                sh '''
+                    whoami
+                    ls -l /home/rahul/.ssh/my_guru.pem
+                    ssh -o BatchMode=yes \
+                        -o ConnectTimeout=10 \
+                        -i /home/rahul/.ssh/my_guru.pem \
+                        ubuntu@13.234.119.234 "echo BASTION_OK"
+                '''
+            }
+        }
+
         stage('Run Ansible Configuration') {
             steps {
                 dir('ansible') {
