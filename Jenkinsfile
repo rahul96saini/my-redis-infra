@@ -35,10 +35,10 @@ pipeline {
 
                     // 2. Run Ansible playbook and inject the dynamic SSH proxy command
                     dir('ansible') {
-                        sh """
-                        ansible-playbook playbook.yml \
-                          --ssh-common-args='-o ProxyCommand="ssh -W %h:%p -q -i ~/.ssh/my-guru.pem ubuntu@${bastionIp}"'
-                        """
+                        sh '''
+                          BASTION_IP=$(terraform -chdir=redis-infra output -raw bastion_public_ip)
+                          ansible-playbook playbook.yml --ssh-common-args="-o ProxyCommand='ssh -W %h:%p -q -i ~/.ssh/my-guru.pem ubuntu@${BASTION_IP}'"
+                        '''
                     }
                 }
             }
