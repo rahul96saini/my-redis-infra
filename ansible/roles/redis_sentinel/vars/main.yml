@@ -1,0 +1,4 @@
+---
+# Role-specific internal variables if needed
+redis_conf_path: /etc/redis/redis.conf
+sentinel_conf_path: /etc/redis/sentinel.conf

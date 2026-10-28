@@ -1,0 +1,6 @@
+---
+- name: Configure Redis Cluster and Sentinel
+  hosts: role_redis_node
+  become: yes
+  roles:
+    - redis_sentinel
