@@ -24,22 +24,18 @@ pipeline {
 
         stage('Run Ansible Configuration') {
             steps {
-                script {
-                    // 1. Dynamically extract the Bastion Public IP from Terraform outputs
-                    def bastionIp = sh(
-                        script: 'terraform -chdir=redis-infra output -raw bastion_public_ip',
-                        returnStdout: true
-                    ).trim()
-
-                    echo "Detected Bastion Public IP: ${bastionIp}"
-
-                    // 2. Run Ansible playbook and inject the dynamic SSH proxy command
-                    dir('ansible') {
-                        sh '''
-                          BASTION_IP=$(terraform -chdir=redis-infra output -raw bastion_public_ip)
-                          ansible-playbook playbook.yml --ssh-common-args="-o ProxyCommand='ssh -W %h:%p -q -i ~/.ssh/my-guru.pem ubuntu@${BASTION_IP}'"
-                        '''
-                    }
+                dir('ansible') {
+                    sh '''
+                      BASTION_IP=$(terraform -chdir=../redis-infra output -raw bastion_public_ip)
+                      echo "Detected Bastion Public IP: ${BASTION_IP}"
+                      
+                      if [ -z "${BASTION_IP}" ]; then
+                        echo "Error: Bastion Public IP is empty!"
+                        exit 1
+                      fi
+                      
+                      ansible-playbook playbook.yml --ssh-common-args="-o ProxyCommand='ssh -W %h:%p -q -i ~/.ssh/my-guru.pem ubuntu@${BASTION_IP}'"
+                    '''
                 }
             }
         }
