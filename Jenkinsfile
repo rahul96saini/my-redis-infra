@@ -35,9 +35,10 @@ pipeline {
                         exit 1
                     fi
 
-                    ssh -o BatchMode=yes \\
-                        -o ConnectTimeout=10 \\
-                        -i /home/rahul/.ssh/my_guru.pem \\
+                    ssh -o BatchMode=yes \
+                        -o ConnectTimeout=10 \
+                        -o StrictHostKeyChecking=accept-new \
+                        -i /home/rahul/.ssh/my_guru.pem \
                         ubuntu@${BASTION_IP} "echo BASTION_OK"
                 '''
             }
