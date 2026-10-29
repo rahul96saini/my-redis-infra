@@ -8,7 +8,6 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // Pulls code from your Git repository[cite: 2]
                 checkout scm
             }
         }
@@ -27,10 +26,19 @@ pipeline {
                 sh '''
                     whoami
                     ls -l /home/rahul/.ssh/my_guru.pem
-                    ssh -o BatchMode=yes \
-                        -o ConnectTimeout=10 \
-                        -i /home/rahul/.ssh/my_guru.pem \
-                        ubuntu@13.234.119.234 "echo BASTION_OK"
+
+                    BASTION_IP=$(terraform -chdir=redis-infra output -raw bastion_public_ip)
+                    echo "Detected Bastion Public IP: ${BASTION_IP}"
+
+                    if [ -z "${BASTION_IP}" ]; then
+                        echo "Error: Bastion Public IP is empty!"
+                        exit 1
+                    fi
+
+                    ssh -o BatchMode=yes \\
+                        -o ConnectTimeout=10 \\
+                        -i /home/rahul/.ssh/my_guru.pem \\
+                        ubuntu@${BASTION_IP} "echo BASTION_OK"
                 '''
             }
         }
@@ -39,15 +47,15 @@ pipeline {
             steps {
                 dir('ansible') {
                     sh '''
-                      BASTION_IP=$(terraform -chdir=../redis-infra output -raw bastion_public_ip)
-                      echo "Detected Bastion Public IP: ${BASTION_IP}"
-                      
-                      if [ -z "${BASTION_IP}" ]; then
-                        echo "Error: Bastion Public IP is empty!"
-                        exit 1
-                      fi
-                      
-                      ansible-playbook playbook.yml --ssh-common-args="-o ProxyCommand='ssh -W %h:%p -q -i /home/rahul/.ssh/my_guru.pem ubuntu@${BASTION_IP}'"
+                        BASTION_IP=$(terraform -chdir=../redis-infra output -raw bastion_public_ip)
+                        echo "Detected Bastion Public IP: ${BASTION_IP}"
+
+                        if [ -z "${BASTION_IP}" ]; then
+                            echo "Error: Bastion Public IP is empty!"
+                            exit 1
+                        fi
+
+                        ansible-playbook playbook.yml --ssh-common-args="-o ProxyCommand='ssh -W %h:%p -q -i /home/rahul/.ssh/my_guru.pem ubuntu@${BASTION_IP}'"
                     '''
                 }
             }
